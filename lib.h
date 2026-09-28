@@ -1,0 +1,17 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include <numeric>
+
+using std::string;
+using std::vector;
+using std::cout;
+using std::cin;
+using std::endl;
+using std::accumulate;
+using std::ostream;
+using std::istream;
+using std::setw;
+using std::left;
+using std::right;
