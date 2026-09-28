@@ -1,8 +1,13 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
 #include <iomanip>
 #include <numeric>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <random>
 
 using std::string;
 using std::vector;
