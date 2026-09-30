@@ -56,14 +56,18 @@ namespace {
     }
 
     void fileInput(vector<Student> &group) {
-        string fname = "Students.txt";
-        std::ifstream file(fname);
+        string fName;
+        cout << "Name file: ";
+        cin >> fName;
+
+        std::ifstream file("files/"+fName);
         if (!file) {
-            cout << "Cannot open " << fname << "\n";
+            cout << "Cannot open " << fName << "\n";
             return;
         }
         string header;
-        std::getline(file, header);                       // skip the header line
+        std::getline(file, header);
+        cin.ignore();
 
         int lineNo = 1;
         while (true) {
@@ -72,7 +76,7 @@ namespace {
                 group.push_back(s);
             } else if (file.eof()) {
                 break;
-            } else {                                      // invalid line: report and go on
+            } else {
                 file.clear();
                 cout << "Warning: skipped invalid line near line " << lineNo + 1 << "\n";
             }
@@ -86,7 +90,7 @@ int main() {
     vector<Student> group;
     cout << "1 - enter students manually\n"
          << "2 - generate students randomly\n"
-         << "3 - read students from Students.txt\n"
+         << "3 - read students from a file\n"
          << "Choice: ";
     int choice;
     cin >> choice;

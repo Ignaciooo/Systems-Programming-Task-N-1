@@ -3,7 +3,6 @@
 namespace {
     const int W_NAME = 12, W_SURNAME = 15, W_NUM = 12;
 
-    // Reads an integer in [lo, hi]; returns false if the input is not a number.
     bool readScore(int &value, int lo, int hi) {
         while (true) {
             if (!(cin >> value)) return false;
@@ -13,7 +12,6 @@ namespace {
     }
 }
 
-// ---------- Rule of three ----------
 Student::Student() : name(""), surname(""), hw(), exam(0) {}
 
 Student::Student(const string &N, const string &SN, const vector<int> &HW, int E)
@@ -41,7 +39,6 @@ void Student::clear() {
     exam = 0;
 }
 
-// ---------- Input ----------
 void Student::input() {
     clear();
     cout << "Name: ";    cin >> name;
@@ -51,7 +48,7 @@ void Student::input() {
     while (true) {
         cout << "  HW" << hw.size() + 1 << ": ";
         int n;
-        if (!readScore(n, 0, 10)) {           // not a number -> stop homework input
+        if (!readScore(n, 0, 10)) {
             cin.clear();
             cin.ignore(10000, '\n');
             break;
@@ -78,15 +75,14 @@ void Student::randomize(const string &N, const string &SN, std::mt19937 &gen) {
     exam = score(gen);
 }
 
-// ---------- Calculations ----------
 double Student::average() const {
     if (hw.empty()) return 0.0;
-    return accumulate(hw.begin(), hw.end(), 0.0) / hw.size();
+    return accumulate(hw.begin(), hw.end(), 0.0) / static_cast<double>(hw.size());
 }
 
 double Student::median() const {
     if (hw.empty()) return 0.0;
-    vector<int> tmp(hw);                       // sort a copy, keep original order
+    vector<int> tmp(hw);
     std::sort(tmp.begin(), tmp.end());
     size_t n = tmp.size();
     if (n % 2 == 1) return tmp[n / 2];
@@ -98,7 +94,6 @@ double Student::finalGrade(Method m) const {
     return 0.4 * h + 0.6 * exam;
 }
 
-// ---------- Output ----------
 void Student::printHeader(Method m) {
     const char *title = (m == Method::Average) ? "Final_Point(Aver.)" : "Final_Point(Med.)";
     cout << left << setw(W_NAME) << "Name" << setw(W_SURNAME) << "Surname"
@@ -127,7 +122,7 @@ ostream &operator<<(ostream &out, const Student &A) {
 
 istream &operator>>(istream &in, Student &A) {
     string line;
-    do {                                       // skip blank lines
+    do {
         if (!std::getline(in, line)) return in;
     } while (line.find_first_not_of(" \t\r") == string::npos);
 
@@ -137,12 +132,12 @@ istream &operator>>(istream &in, Student &A) {
     int x;
     if (!(ss >> n >> s)) { in.setstate(std::ios::failbit); return in; }
     while (ss >> x) v.push_back(x);
-    if (!ss.eof() || v.empty()) { in.setstate(std::ios::failbit); return in; }   // bad line
+    if (!ss.eof() || v.empty()) { in.setstate(std::ios::failbit); return in; }
 
     A.clear();
     A.name = n;
     A.surname = s;
-    A.exam = v.back();                         // last number is the exam
+    A.exam = v.back();
     v.pop_back();
     A.hw = v;
     return in;
