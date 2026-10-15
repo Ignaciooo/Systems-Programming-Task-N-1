@@ -12,6 +12,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <filesystem>
+#include <deque>
 
 using std::string;
 using std::vector;
@@ -24,3 +25,4 @@ using std::istream;
 using std::setw;
 using std::left;
 using std::right;
+using std::deque;
