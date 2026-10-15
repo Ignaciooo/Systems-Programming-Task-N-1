@@ -1,0 +1,57 @@
+#include "ExceptionHandler.h"
+#include <iostream>
+#include <exception>
+#include <stdexcept>
+#include <system_error>
+#include <typeinfo>
+#include <new>
+#include <ios>   
+#include <future>
+
+namespace {
+    template <typename T>
+    void processCodeException(const T &e) {
+        using namespace std;
+        auto c = e.code();
+        cerr << "- category: " << c.category().name() << endl;
+        cerr << "- value: " << c.value() << endl;
+        cerr << "- msg: " << c.message() << endl;
+        cerr << "- def category: " << c.default_error_condition().category().name() << endl;
+        cerr << "- def value: " << c.default_error_condition().value() << endl;
+        cerr << "- def msg: " << c.default_error_condition().message() << endl;
+    }
+}
+
+void processException() {
+    using namespace std;
+    try {
+        throw;
+    }
+    catch (const ios_base::failure &e) {
+        cerr << "I/O EXCEPTION: " << e.what() << endl;
+        processCodeException(e);
+    }
+    catch (const system_error &e) {
+        cerr << "SYSTEM EXCEPTION: " << e.what() << endl;
+        processCodeException(e);
+    }
+    catch (const future_error &e) {
+        cerr << "FUTURE EXCEPTION: " << e.what() << endl;
+        processCodeException(e);
+    }
+    catch (const bad_alloc &e) {
+        cerr << "BAD ALLOC EXCEPTION: " << e.what() << endl;
+    }
+    catch (const invalid_argument &e) {
+        cerr << "INVALID DATA EXCEPTION: " << e.what() << endl;
+    }
+    catch (const domain_error &e) {
+        cerr << "DOMAIN EXCEPTION: " << e.what() << endl;
+    }
+    catch (const exception &e) {
+        cerr << "EXCEPTION: " << e.what() << endl;
+    }
+    catch (...) {
+        cerr << "EXCEPTION (unknown)" << endl;
+    }
+}

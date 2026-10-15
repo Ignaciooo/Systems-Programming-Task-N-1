@@ -15,7 +15,11 @@ namespace {
 Student::Student() : name(""), surname(""), hw(), exam(0) {}
 
 Student::Student(const string &N, const string &SN, const vector<int> &HW, int E)
-    : name(N), surname(SN), hw(HW), exam(E) {}
+    : name(N), surname(SN), hw(HW), exam(E) {
+    auto bad = [](int v) { return v < MIN_SCORE || v > MAX_SCORE; };
+    if (bad(E) || std::any_of(HW.begin(), HW.end(), bad))
+        throw std::invalid_argument("Student " + N + " " + SN + ": scores must be between 1 and 10");
+}
 
 Student::Student(const Student &B)
     : name(B.name), surname(B.surname), hw(B.hw), exam(B.exam) {}
@@ -65,23 +69,22 @@ void Student::input() {
     }
 }
 
-void Student::randomize(const string &N, const string &SN, std::mt19937 &gen) {
+void Student::randomize(const string &N, const string &SN, RandInt &hwCount, RandInt &score) {
     clear();
     name = N;
     surname = SN;
-    std::uniform_int_distribution<int> count(3, 10), score(1, 10);
-    int n = count(gen);
-    for (int i = 0; i < n; ++i) hw.push_back(score(gen));
-    exam = score(gen);
+    int n = hwCount();
+    for (int i = 0; i < n; ++i) hw.push_back(score());
+    exam = score();
 }
 
 double Student::average() const {
-    if (hw.empty()) return 0.0;
+    if (hw.empty()) throw std::domain_error(name + " " + surname + ": no homework results");
     return accumulate(hw.begin(), hw.end(), 0.0) / static_cast<double>(hw.size());
 }
 
 double Student::median() const {
-    if (hw.empty()) return 0.0;
+    if (hw.empty()) throw std::domain_error(name + " " + surname + ": no homework results");
     vector<int> tmp(hw);
     std::sort(tmp.begin(), tmp.end());
     size_t n = tmp.size();
@@ -101,10 +104,12 @@ void Student::printHeader(Method m) {
     cout << string(W_NAME + W_SURNAME + W_NUM + 6, '-') << "\n";
 }
 
-void Student::printHeaderBoth() {
-    cout << left << setw(W_NAME) << "Name" << setw(W_SURNAME) << "Surname"
+void Student::printHeaderBoth() { printHeaderBothTo(cout); }
+
+void Student::printHeaderBothTo(ostream &out) {
+    out << left << setw(W_NAME) << "Name" << setw(W_SURNAME) << "Surname"
          << right << setw(W_NUM) << "Final (Avg.)" << " | " << setw(W_NUM) << "Final (Med.)" << "\n";
-    cout << string(W_NAME + W_SURNAME + W_NUM + 3 + W_NUM, '-') << "\n";
+    out << string(W_NAME + W_SURNAME + W_NUM + 3 + W_NUM, '-') << "\n";
 }
 
 void Student::print(Method m) const {
@@ -132,7 +137,11 @@ istream &operator>>(istream &in, Student &A) {
     int x;
     if (!(ss >> n >> s)) { in.setstate(std::ios::failbit); return in; }
     while (ss >> x) v.push_back(x);
-    if (!ss.eof() || v.empty()) { in.setstate(std::ios::failbit); return in; }
+    if (!ss.eof() || v.size() < 2) { in.setstate(std::ios::failbit); return in; }
+    if (std::any_of(v.begin(), v.end(), [](int k) { return k < Student::MIN_SCORE || k > Student::MAX_SCORE; })) {
+        in.setstate(std::ios::failbit);
+        return in;
+    }
 
     A.clear();
     A.name = n;

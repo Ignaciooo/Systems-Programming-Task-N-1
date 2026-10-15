@@ -1,3 +1,7 @@
 /.vs
 /.vscode
-/build
+
+/files/failed_*.txt
+/files/passed_*.txt
+/files/students1000000.txt
+/files/students10000000.txt
