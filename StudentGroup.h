@@ -3,7 +3,7 @@
 #include "Student.h"
 
 class StudentGroup {
-    vector<Student> students;
+    list<Student> students;
 
 public:
     static constexpr double PASS_MARK = 5.0;
@@ -20,7 +20,7 @@ public:
         return students.empty();
     }
 
-    const vector<Student> &all() const {
+    const list<Student> &all() const {
         return students;
     }
 

@@ -39,7 +39,7 @@ void StudentGroup::save(const string &path) const {
 }
 
 void StudentGroup::sortByFinal(Method m) {
-    std::sort(students.begin(), students.end(), [m](const Student &a, const Student &b) {
+    students.sort([m](const Student &a, const Student &b) {
         return a.finalGrade(m) < b.finalGrade(m);
     });
 }
